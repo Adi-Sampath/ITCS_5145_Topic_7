@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <chrono>
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,7 +41,60 @@ int main (int argc, char* argv[]) {
     return -1;
   }
 
-  //insert code here
+  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
+  //insert code here
+  int functionid = atoi(argv[1]);
+  double a = atof(argv[2]);
+  double b = atof(argv[3]);
+  int n = atoi(argv[4]);
+  int intensity = atoi(argv[5]);
+  int nbthreads = atoi(argv[6]);
+  int granularity = atoi(argv[8]);
+  char* scheduling = argv[7];
+
+  double sum = 0;
+  double x = 0;
+  double h = (b-a)/n;
+  omp_set_num_threads(nbthreads);
+
+      if (strcmp(scheduling, "static") == 0) {
+        // Use static scheduling
+        #pragma omp parallel for reduction(+:sum) schedule(static, granularity)
+          for (int i = 0; i < n; i++) {
+              x = a + i * h;
+              if (functionid == 1) {
+                  sum += h * f1(x, intensity);
+              } else if (functionid == 2) {
+                  sum += h * f2(x, intensity);
+              } else if (functionid == 3) {
+                  sum += h * f3(x, intensity);
+              } else if (functionid == 4) {
+                  sum += h * f4(x, intensity);
+              }
+        }
+    } else {
+        // Use dynamic scheduling
+        #pragma omp parallel for reduction(+:sum) schedule(dynamic, granularity)
+          for (int i = 0; i < n; i++) {
+              x = a + i * h;
+              if (functionid == 1) {
+                  sum += h * f1(x, intensity);
+              } else if (functionid == 2) {
+                  sum += h * f2(x, intensity);
+              } else if (functionid == 3) {
+                  sum += h * f3(x, intensity);
+              } else if (functionid == 4) {
+                  sum += h * f4(x, intensity);
+              }
+          }
+    }
+
+    std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
+
+    std::cout<<sum<<std::endl;
+    std::cerr<<elapsed_seconds.count()<<std::endl;
+    
   return 0;
 }
