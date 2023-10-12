@@ -62,7 +62,7 @@ int main (int argc, char* argv[]) {
         // Use static scheduling
         #pragma omp parallel for reduction(+:sum) schedule(static, granularity)
           for (int i = 0; i < n; i++) {
-              x = a + i * h;
+              x = a + (i + 0.5) * h;
               if (functionid == 1) {
                   sum += h * f1(x, intensity);
               } else if (functionid == 2) {
@@ -77,7 +77,7 @@ int main (int argc, char* argv[]) {
         // Use dynamic scheduling
         #pragma omp parallel for reduction(+:sum) schedule(dynamic, granularity)
           for (int i = 0; i < n; i++) {
-              x = a + i * h;
+              x = a + (i + 0.5) * h;
               if (functionid == 1) {
                   sum += h * f1(x, intensity);
               } else if (functionid == 2) {
