@@ -44,7 +44,7 @@ int main (int argc, char* argv[]) {
     
     // insert reduction code here
     int sum = 0;
-    
+
     #pragma omp parallel for schedule(runtime) num_threads(atoi(argv[2])) reduction(+:sum) if(atoi(argv[4])>0)
     for (int i = 0; i < n; i++) {
         sum += arr[i];
@@ -53,7 +53,7 @@ int main (int argc, char* argv[]) {
     std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapased_seconds = end-start;
 
-    std::cout<<"sum: "<<sum<<std::endl;
+    std::cout<<sum<<std::endl;
     std::cerr<<elapased_seconds.count()<<std::endl;
     
     delete[] arr;
