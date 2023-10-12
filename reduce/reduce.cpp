@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <chrono>
 
 
 #ifdef __cplusplus
@@ -33,6 +34,8 @@ int main (int argc, char* argv[]) {
         std::cerr<<"Usage: "<<argv[0]<<" <n> <nbthreads> <scheduling> <granularity>"<<std::endl;
         return -1;
     }
+
+    std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
     
     int n = atoi(argv[1]);
     int * arr = new int [n];
@@ -46,7 +49,11 @@ int main (int argc, char* argv[]) {
         sum += arr[i];
     }
 
+    std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapased_seconds = end-start;
+
     std::cout<<"sum: "<<sum<<std::endl;
+    std::cerr<<elapased_seconds.count()<<std::endl;
     
     delete[] arr;
     
