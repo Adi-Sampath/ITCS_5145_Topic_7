@@ -43,8 +43,7 @@ int main (int argc, char* argv[]) {
     generateReduceData (arr, atoi(argv[1]));
     
     // insert reduction code here
-    int sum = 0;
-    #pragma omp parallel for schedule(runtime) reduction(+:sum)
+    #pragma omp parallel for num_threads(atoi(argv[2])) reduction(+:sum) schedule(static, atoi(argv[4]))
     for (int i = 0; i < n; i++) {
         sum += arr[i];
     }
