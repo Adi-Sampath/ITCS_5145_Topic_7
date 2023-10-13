@@ -73,7 +73,7 @@ int main (int argc, char* argv[]) {
                   sum += h * f4(x, intensity);
               }
         }
-    } else {
+    } else if (strcmp(scheduling, "dynamic") == 0) {
         // Use dynamic scheduling
         #pragma omp parallel for reduction(+:sum) schedule(dynamic, granularity)
           for (int i = 0; i < n; i++) {
@@ -88,6 +88,21 @@ int main (int argc, char* argv[]) {
                   sum += h * f4(x, intensity);
               }
           }
+    } else if(strcmp(scheduling, "guided") == 0) {
+      // Use guided scheduling
+      #pragma omp parallel for reduction(+:sum) schedule(guided, granularity)
+        for (int i = 0; i < n; i++) {
+            x = a + (i + 0.5) * h;
+            if (functionid == 1) {
+                sum += h * f1(x, intensity);
+            } else if (functionid == 2) {
+                sum += h * f2(x, intensity);
+            } else if (functionid == 3) {
+                sum += h * f3(x, intensity);
+            } else if (functionid == 4) {
+                sum += h * f4(x, intensity);
+            }
+        }
     }
 
     std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();

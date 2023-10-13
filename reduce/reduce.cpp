@@ -39,13 +39,30 @@ int main (int argc, char* argv[]) {
     
     int n = atoi(argv[1]);
     int * arr = new int [n];
+    int nbthreads = atoi(argv[2]);
+    int granularity = atoi(argv[4]);
+    char* scheduling = argv[3];
+
+    omp_set_num_threads(nbthreads);
+    omp_sched_t sched;
     
     generateReduceData (arr, atoi(argv[1]));
     
     // insert reduction code here
     int sum = 0;
 
-    #pragma omp parallel for schedule(runtime) num_threads(atoi(argv[2])) reduction(+:sum) if(atoi(argv[4])>0)
+    if(strcmp(scheduling, "static") == 0)
+        sched = omp_sched_static;
+    else if(strcmp(scheduling, "dynamic") == 0)
+        sched = omp_sched_dynamic;
+    else if(strcmp(scheduling, "guided") == 0)
+        sched = omp_sched_guided;
+    else
+        sched = omp_sched_static;
+    
+    omp_set_schedule(sched, granularity);
+    
+    #pragma omp parallel for reduction(+:sum)  
         for (int i = 0; i < n; i++) {
             sum += arr[i];
         }
